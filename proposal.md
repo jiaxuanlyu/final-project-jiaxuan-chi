@@ -53,5 +53,9 @@ We expect to visualize daily zipcode data for a given zipcode; But there are unc
 <br>
 
 <h2>Wireframes</h2>
-
+<b>Figma Links</b>: <a href="http://www3.septa.org/hackathon/">Septa</a>
+    <ul>
+        <li>Editale link: https://www.figma.com/proto/pHK7OMNewEXZMoOqrEHVcR/Travel-Navigation?node-id=2%3A61&scaling=scale-down </li>
+        <li>Interactive Prototype: https://www.figma.com/proto/pHK7OMNewEXZMoOqrEHVcR/Travel-Navigation?node-id=2%3A61&scaling=scale-down </li>
+    </ul>
 <img src="https://github.com/MUSA-509/final-project-jiaxuan-chi/blob/main/Travel_Navigation_Wireframes%20.jpg" />
