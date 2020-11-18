@@ -49,4 +49,7 @@ We expect to visualize daily zipcode data for a given zipcode; But there are unc
 <h3>Walk Data</h3>
 <b>Source</b>: Mapbox API
 
+<br>
+<br>
 
+<h3>Wireframes</h3>
