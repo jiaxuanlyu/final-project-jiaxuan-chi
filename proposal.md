@@ -54,4 +54,4 @@ We expect to visualize daily zipcode data for a given zipcode; But there are unc
 
 <h2>Wireframes</h2>
 
-<img src="https://github.com/MUSA-509/final-project-jiaxuan-chi/blob/main/Travel_Navigation_Wireframes%20.jpg" width="440" height="330"/>
+<img src="https://github.com/MUSA-509/final-project-jiaxuan-chi/blob/main/Travel_Navigation_Wireframes%20.jpg" />
