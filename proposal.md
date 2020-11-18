@@ -12,13 +12,13 @@ Due to the current COVID pandemic, we aim to make an app that could help people 
 <h2>Data</h2>
 
 <h3>Covid Data</h3>
-<u>Source</u>: Open Data Philly & Carto
+<b>Source</b>: Open Data Philly & Carto
     <ul>
         <li><b>by date:</b> https://www.opendataphilly.org/dataset/covid-cases/resource/7ae481eb-563a-46fc-a108-b3d335e1e171</li>
         <li><b>by zipcode:</b> https://www.opendataphilly.org/dataset/covid-cases/resource/a8761883-f0c1-4d20-8369-f5050af8b85a</li>
     </ul>
 
-<u>How to host</u>: PostgreSQL on AWS RDS
+<b>How to host</b>: PostgreSQL on AWS RDS
 
 We expect to visualize daily zipcode data for a given zipcode; But there are uncertainties about the data: if the data are not accurate, alternatively, we might do some bar charts.
 
@@ -27,26 +27,26 @@ We expect to visualize daily zipcode data for a given zipcode; But there are unc
 <br>
 
 <h3>Bike Data </h3>
-<u>Source</u>: <a href="https://www.rideindego.com/about/data/">Indego</a>
+<b>Source</b>: <a href="https://www.rideindego.com/about/data/">Indego</a>
     <ul>
         <li><b>Live station Geojson:</b>https://kiosks.bicycletransit.workers.dev/phl</li>
     </ul>
 
-<u>How to host</u>: PostgreSQL on AWS RDS
+<b>How to host</b>: PostgreSQL on AWS RDS
 
 <br>
 
 <h3>Bus Data </h3>
-Source: <a href="http://www3.septa.org/hackathon/">Septa</a>
+<b>Source</b>: <a href="http://www3.septa.org/hackathon/">Septa</a>
     <ul>
         <li>Real Time: https://developers.google.com/transit/gtfs-realtime/ </li>
     </ul>
 
-<u>How to host</u>: PostgreSQL on AWS RDS
+<b>How to host</b>: PostgreSQL on AWS RDS
 
 <br>
 
 <h3>Walk Data</h3>
-Source: Mapbox API
+<b>Source</b>: Mapbox API
 
 
