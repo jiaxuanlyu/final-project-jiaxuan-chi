@@ -52,4 +52,4 @@ We expect to visualize daily zipcode data for a given zipcode; But there are unc
 <br>
 <br>
 
-<h3>Wireframes</h3>
+<h2>Wireframes</h2>
