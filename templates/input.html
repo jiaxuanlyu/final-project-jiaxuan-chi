@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Public Transportation Tour Guide</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+</head>
+<body>
+
+    <div class="section hero">
+        <div class="container">
+            <div class="row">
+                <h1>Cycling</h1>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+  <div class="row">
+      <div class="eight columns">
+          <form action="{{ url_for('station_viewer') }}" method="get">
+              <div>
+                  <label>Start neighborhood</label>
+                  <select class="u-full-width" name="neighborhood">
+                      {% for start_name in nnames %}
+                      <option value="{{ start_name }}">{{ start_name }}</option>
+                      {% endfor %}
+                  </select>
+                  <label>End neighborhood</label>
+                  <select class="u-full-width" name="neighborhood">
+                      {% for end_name in nnames %}
+                      <option value="{{ end_name }}">{{ end_name }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <input type="submit" value="Spot nearby stations">
+          </form>
+      </div>
+
+      <div class="four columns">
+      This is a demo of how to have a basic form input on your site to choose a zip code (from the dropdown) and have a dynamic display of bike stations in that zipcode.<br>
+      The data is referenced from Indego Real Time data at 2020-11-30. <br>
+      There are 143 number of rows.
+      </div>
+  </div>
+        </div>
+
+    </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
