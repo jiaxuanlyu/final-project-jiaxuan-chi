@@ -134,10 +134,11 @@ def station_viewer():
 
 
 
-@app.route("/cycling/")
+@app.route("/cycling", methods=["GET"])
 def cycling():
-    address = request.args.get("address")
-
+    start_name = request.args.get("neighborhood")
+    start_name = start_name
+    end_name = end_name
     #get coordinates of start point
     geocoding_call = (
         "https://api.mapbox.com/geocoding/v5/mapbox.places/"
@@ -171,6 +172,13 @@ def cycling():
         center_lat=(lat + end_lat) / 2,
     )
     logging.warning(cycle_map)
+
+    # generate interactive map
+    return render_template(
+        "bike_route.html",
+        cycle_map=cycle_map
+    )
+
 
 
 def get_static_map(start_lng, start_lat, end_lng, end_lat):

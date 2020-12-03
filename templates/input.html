@@ -44,7 +44,7 @@
           <form action="{{ url_for('station_viewer') }}" method="get">
               <div>
                   <label>Start neighborhood</label>
-                  <select class="u-full-width" name="neighborhood">
+                  <select class="u-full-width" name="start_neighborhood">
                       {% for start_name in nnames %}
                       <option value="{{ start_name }}">{{ start_name }}</option>
                       {% endfor %}

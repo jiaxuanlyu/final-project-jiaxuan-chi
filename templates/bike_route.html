@@ -38,36 +38,16 @@
     <section class="section hero section-a">
         <div class="container">
             <div class="row">
-                <h1>Bike stations in {{ nname }}</h1>
+                <h1>Tour guide</h1>
             </div>
         </div>
     </section>
     <section class="section">
         <div class="container">
           <div class="row">
-              <div class="five columns address-list">
-                  <table>
-                      <thead>
-                          <th>Name</th>
-                          <th>Address</th>
-                          <th>Available bikes</th>
-                      </thead>
-                      <tbody>
-                      {% for row in stations %}
-                      <tr>
-                          {% for col in row %}
-                              <td>{{ col }}</td>
-                          {% endfor %}
-
-                      </tr>
-                      {% endfor %}
-                      </tbody>
-                  </table>
-              </div>
-
               <div class="seven columns">
-                  <h3><b>{{ num_stations }}</b> bike stations</h3>
-                  {{map | safe}}
+                  <h3>Cycling Route</h3>
+                  {{cycle_map | safe}}
               </div>
           </div>
         </div>
