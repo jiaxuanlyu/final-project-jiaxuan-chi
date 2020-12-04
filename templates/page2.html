@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Covid Map</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+</head> 
+
+<body>
+
+
+      <div id="covid map" class="eight columns">
+          <h3>Covid Map</h3>
+          <p>The map shows the accumulated covid cases by zip code, from March to {{curr_time}}.</p>
+          <br>
+          <p>The real time Covid Data are referenced from OpenDataPhilly.</p>
+          {{map | safe}}
+      </div>
+
+      <div class="four columns">
+      <h3>Please select your destinations</h3>
+      <table>
+        <thead>
+            <th>Type</th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Indego Bike Station</td>
+        </tr>
+        <tr>
+            <td>Hospitals</td>
+        </tr>
+        </tbody>
+    </table>
+      </div>
+  </div>
+        </div>
+    
+    <section class="section section-c">
+        <div class="container">
+            <div class="row">
+                <a class="button button-primary" href="/">Enter Another Address</a>
+            </div>
+        </div>
+    </section>
+    
+    </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
