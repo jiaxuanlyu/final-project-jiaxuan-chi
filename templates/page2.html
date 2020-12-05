@@ -26,7 +26,7 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
-</head> 
+</head>
 
 <body>
 
@@ -34,30 +34,37 @@
       <div id="covid map" class="eight columns">
           <h3>Covid Map</h3>
           <p>The map shows the accumulated covid cases by zip code, from March to {{curr_time}}.</p>
-          <br>
           <p>The real time Covid Data are referenced from OpenDataPhilly.</p>
           {{map | safe}}
       </div>
 
       <div class="four columns">
       <h3>Please select your destinations</h3>
-      <table>
-        <thead>
-            <th>Type</th>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Indego Bike Station</td>
-        </tr>
-        <tr>
-            <td>Hospitals</td>
-        </tr>
-        </tbody>
-    </table>
+          <div>
+              <label>Amenities</label>
+                  <table>
+                      <thead>
+                          <th>Types</th>
+                          <th>Choice</th>
+                      </thead>
+                      <tbody>
+                      <tr>
+                          <td>Indego Bike Stations</td>
+                          <td><a href="http://127.0.0.1:5000/stationviewer?address={{name}}">Select</a></td>
+                      </tr>
+                      <tr>
+                          <td>Hospitals</td>
+                          <td><a href="http://127.0.0.1:5000/stationviewer?address={{name}}">Select</a></td>
+                      </tr>
+                      </tbody>
+                  </table>
+                </form>
+              </div>
+          </div>
       </div>
   </div>
         </div>
-    
+
     <section class="section section-c">
         <div class="container">
             <div class="row">
@@ -65,7 +72,7 @@
             </div>
         </div>
     </section>
-    
+
     </div>
 
 <!-- End Document

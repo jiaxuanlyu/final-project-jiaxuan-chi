@@ -38,18 +38,40 @@
     <section class="section hero section-a">
         <div class="container">
             <div class="row">
-                <h1>Tour guide</h1>
+                <h1>Bike stations near {{ address }}</h1>
             </div>
         </div>
     </section>
     <section class="section">
         <div class="container">
           <div class="row">
+              <div class="five columns address-list">
+                  <table>
+                      <thead>
+                          <th>Name</th>
+                          <th>Address</th>
+                          <th>Available bikes</th>
+                          <th>Route</th>
+                      </thead>
+                      <tbody>
+                      {% for row in stations %}
+                      <tr>
+                        {% for col in row %}
+                        {% if loop.index != 4 %}
+                            <td>{{ col }}</td>
+                        {% else %}
+                            <td><a href="http://127.0.0.1:5000/cycling?address={{ address }}&{{ col }}">Go</a></td>
+                        {% endif %}
+                        {% endfor %}
+                      </tr>
+                      {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+
               <div class="seven columns">
-                  <h3>Cycling Route</h3>
-                  <h3>{{end_lng}}</h3>
-                  <h3>{{end_lat}}</h3>
-                  {{cycle_map | safe}}
+                  <h3><b>{{ num_stations }}</b> bike stations</h3>
+                  {{map | safe}}
               </div>
           </div>
         </div>
@@ -57,7 +79,7 @@
     <section class="section section-c">
         <div class="container">
             <div class="row">
-                <a class="button button-primary" href="/">Select another zip_code</a>
+                <a class="button button-primary" href="/">Enter Another Address</a>
             </div>
         </div>
     </section>

@@ -18,6 +18,7 @@ import json
 import logging
 from flask import Flask, request, render_template
 from datetime import datetime
+from shapely.geometry import shape
 
 
 
@@ -57,7 +58,7 @@ def get_sql_engine():
 
 
 def get_address(address):
-    
+
     geocoding_call = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
     resp = requests.get(
         geocoding_call,
@@ -141,33 +142,33 @@ cmap = plt.get_cmap('YlOrRd')
 def get_style(feature):
     """
     Given an input GeoJSON feature, return a style dict.
-    
+
     Notes
     -----
-    The color in the style dict is determined by the 
-    "percent_no_internet_normalized" column in the 
+    The color in the style dict is determined by the
+    "percent_no_internet_normalized" column in the
     input "feature".
     """
     # Get the data value from the feature
     value = feature['properties']['n_covid']
-    
+
     # Evaluate the color map
     # NOTE: value must between 0 and 1
     rgb_color = cmap(value) # this is an RGB tuple
-    
+
     # Convert to hex string
     color = mcolors.rgb2hex(rgb_color)
-    
+
     # Return the style dictionary
     return {'weight': 2, 'color':"tomato", 'fillColor': color, "fillOpacity": 0.75}
 
 
 def get_highlighted_style(feature):
     """
-    Return a style dict to use when the user highlights a 
+    Return a style dict to use when the user highlights a
     feature with the mouse.
     """
-    
+
     return {"weight": 3, "color": "black"}
 
 
@@ -184,7 +185,7 @@ def covid_map(geojson, add):
         geojson,
         style_function=get_style,
         highlight_function=get_highlighted_style,
-        tooltip=folium.GeoJsonTooltip(['zip_code', 'covid_cases']) 
+        tooltip=folium.GeoJsonTooltip(['zip_code', 'covid_cases'])
     ).add_to(m)
 
     #Add the point which indicates the user's location
@@ -214,14 +215,177 @@ def covid_viewer():
 
     return render_template(
         "page2.html",
+        name=name,
         map=figure._repr_html_(),
         curr_time = curr_time
     )
 
 
+def get_zipcode_names(add):
+    """Gets the zipcode of your input address"""
+    lng=get_address(add)[1]
+    lat=get_address(add)[0]
+    engine = get_sql_engine()
+    query = text(
+        """
+        SELECT
+        code
+        FROM philly_zipcode
+        WHERE ST_Intersects(geom, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326))
+    """
+    )
+    resp = engine.execute(query,lng=lng, lat=lat).fetchall()
+    # get a list of names
+    names = [row["code"] for row in resp][0]
+    return names
+
+
+def get_bounds(geodataframe):
+    """returns list of sw, ne bounding box pairs"""
+    bounds = geodataframe.geom.total_bounds
+    bounds = [[bounds[0], bounds[1]], [bounds[2], bounds[3]]]
+    return bounds
+
+
+def get_num_stations(add):
+    """Get number of stations in a zipcode"""
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    station_stats = text(
+        """
+        SELECT
+        count(v.*) as num_stations
+        FROM indego_rt1130 as v
+        JOIN philly_zipcode as n
+        ON ST_Intersects(v.geom, n.geom)
+        WHERE n.code = :name
+    """
+    )
+    resp = engine.execute(station_stats, name=name).fetchone()
+    return resp["num_stations"]
 
 
 
+def get_zipcode_stations(add):
+    """Get all stations for a zipcode"""
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    neighborhood_stations = text(
+        """
+        SELECT
+        "name" as Name,
+        "addressStreet" as address,
+        "bikesAvailable" as available_bikes,
+        v.geom as geom,
+        ST_X(v.geom) as lon, ST_Y(v.geom)as lat
+        FROM indego_rt1130 as v
+        JOIN philly_zipcode as n
+        ON ST_Intersects(v.geom, n.geom)
+        WHERE n.code = :name
+    """
+    )
+    stations = gpd.read_postgis(neighborhood_stations, con=engine, params={"name": name})
+    return stations
+
+
+def make_folium_map(station_coord):
+    map = folium.Map(location=station_coord[0], zoom_start=13)
+    for point in range(0, len(station_coord)):
+        folium.Marker(station_coord[point]).add_to(map)
+
+    return map
+
+
+# station viewer page
+@app.route("/stationviewer", methods=["GET"])
+def station_viewer():
+    """Test for form"""
+    name = request.args["address"]
+    stations = get_zipcode_stations(name)
+    stations['coordinate'] = 'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
+    bounds = get_bounds(stations)
+
+    #genetrate folium map
+    station_coordinates = stations[["lat", "lon"]].values.tolist()
+
+    map=make_folium_map(station_coordinates)
+
+
+    # generate interactive map
+
+    return render_template(
+        "page3.html",
+        num_stations=get_num_stations(name),
+        address=name,
+        stations=stations[["name", "address", "available_bikes", 'coordinate']].values,
+        map=map._repr_html_()
+    )
+
+
+def get_static_map(start_lng, start_lat, end_lng, end_lat):
+    """"""
+    geojson_str = get_map_directions(start_lng, start_lat, end_lng, end_lat)
+    return (
+        f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+        f"geojson({geojson_str})/auto/640x640?access_token={MAPBOX_TOKEN}"
+    ), geojson_str
+
+
+def get_map_directions(start_lng, start_lat, end_lng, end_lat):
+    directions_resp = requests.get(
+        f"https://api.mapbox.com/directions/v5/mapbox/cycling/{start_lng},{start_lat};{end_lng},{end_lat}",
+        params={
+            "access_token": MAPBOX_TOKEN,
+            "geometries": "geojson",
+            "steps": "false",
+            "alternatives": "true",
+        },
+    )
+    routes = gpd.GeoDataFrame(
+        geometry=[
+            shape(directions_resp.json()["routes"][idx]["geometry"])
+            for idx in range(len(directions_resp.json()["routes"]))
+        ]
+    )
+    return routes.iloc[:1].to_json()
+
+
+@app.route("/cycling", methods=["GET"])
+def cycling():
+    name = request.args["address"]
+    end_lng = request.args["end_lng"]
+    end_lat = request.args["end_lat"]
+    start_lng=get_address(name)[1]
+    start_lat=get_address(name)[0]
+
+    #get coordinates of start and end point
+    map_directions, geojson_str = get_static_map(
+        start_lng=start_lng,
+        start_lat=start_lng,
+        end_lng=end_lng,
+        end_lat=end_lat,
+    )
+    logging.warning("Map directions %s", str(map_directions))
+
+    #interactive map
+    cycle_map = render_template(
+        "cycle_map.html",
+        mapbox_token=MAPBOX_TOKEN,
+        geojson_str=geojson_str,
+        center_lng=(start_lng + end_lng) / 2,
+        center_lat=(start_lat + end_lat) / 2,
+    )
+    logging.warning(cycle_map)
+
+    # generate interactive map
+    return render_template(
+        "bike_route.html",
+        #cycle_map=cycle_map,
+        start_lng=start_lng,
+        start_lat=start_lng,
+        end_lng=end_lng,
+        end_lat=end_lat,
+    )
 
 
 
