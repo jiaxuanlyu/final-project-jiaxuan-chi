@@ -369,24 +369,20 @@ def cycling():
     )
     logging.warning("Map directions %s", str(map_directions))
 
-    #interactive map
-    cycle_map = render_template(
-        "cycle_map.html",
-        mapbox_token=MAPBOX_TOKEN,
-        geojson_str=geojson_str,
-        center_lng=(start_lng + end_lng) / 2,
-        center_lat=(start_lat + end_lat) / 2,
-    )
-    logging.warning(cycle_map)
+   
+    #logging.warning(cycle_map)
 
     # generate interactive map
     return render_template(
         "bike_route.html",
-        #cycle_map=cycle_map,
+        mapbox_token=MAPBOX_TOKEN,
+        geojson_str=geojson_str,
         start_lng=start_lng,
         start_lat=start_lng,
         end_lng=end_lng,
         end_lat=end_lat,
+        center_lng=(start_lng + end_lng) / 2,
+        center_lat=(start_lat + end_lat) / 2,
     )
 
 
