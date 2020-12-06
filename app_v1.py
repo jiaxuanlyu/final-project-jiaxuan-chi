@@ -355,13 +355,15 @@ def cycling():
     name = request.args["address"]
     end_lng = request.args["end_lng"]
     end_lat = request.args["end_lat"]
+    end_lng = float(end_lng)
+    end_lat = float(end_lat)
     start_lng=get_address(name)[1]
     start_lat=get_address(name)[0]
 
     #get coordinates of start and end point
     map_directions, geojson_str = get_static_map(
         start_lng=start_lng,
-        start_lat=start_lng,
+        start_lat=start_lat,
         end_lng=end_lng,
         end_lat=end_lat,
     )
