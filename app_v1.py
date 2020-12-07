@@ -322,6 +322,76 @@ def station_viewer():
     )
 
 
+#get num hospitals
+def get_num_hospitals(add):
+    """Get number of hospitals in a zipcode"""
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    number_hospitals = text(
+        """
+        SELECT 	COUNT("HOSPITAL_NAME") AS num_hospitals
+        FROM philly_hospital
+        WHERE "ZIP_CODE" = :name
+    """
+    )
+    resp = engine.execute(number_hospitals, name=name).fetchone()
+    return resp["num_hospitals"]
+
+
+
+
+def get_zipcode_hospitals(add):
+    """Get all hospitals within a zipcode"""
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    hospital_info = text(
+        """
+        SELECT 
+	    "HOSPITAL_NAME" AS name, "STREET_ADDRESS" as address, 
+        "PHONE_NUMBER" as contact, geom,
+        ST_X(geom) AS lon, ST_Y(geom) AS lat
+        FROM philly_hospital
+        WHERE "ZIP_CODE" = :name
+    """
+    )
+    hospitals = gpd.read_postgis(hospital_info, con=engine, params={"name": name})
+    return hospitals
+
+
+
+
+# hospital viewer page
+@app.route("/hospitalviewer", methods=["GET"])
+def hospital_viewer():
+    """Test for form"""
+    name = request.args["address"]
+    hospitals = get_zipcode_hospitals(name)
+    hospitals['coordinate'] = 'end_point='+hospitals['name'].astype(str)+'&'+'end_lng=' + hospitals['lon'].astype(str)+'&'+'end_lat='+hospitals['lat'].astype(str)
+    bounds = get_bounds(hospitals)
+
+    #genetrate folium map
+    hospitals_coordinates = hospitals[["lat", "lon"]].values.tolist()
+
+    map=make_folium_map(hospitals_coordinates)
+
+
+    # generate interactive map
+
+    return render_template(
+        "page3_2h.html",
+        num_hospitals=get_num_hospitals(name),
+        address=name,
+        hospitals=hospitals[["name", "address", "contact", "coordinate"]].values,
+        map=map._repr_html_()
+    )
+
+
+
+
+
+
+
+
 def get_static_map(start_lng, start_lat, end_lng, end_lat):
     """"""
     geojson_str = get_map_directions(start_lng, start_lat, end_lng, end_lat)
