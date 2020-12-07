@@ -273,7 +273,7 @@ def get_zipcode_stations(add):
     neighborhood_stations = text(
         """
         SELECT
-        "name" as Name,
+        "name" as name,
         "addressStreet" as address,
         "bikesAvailable" as available_bikes,
         v.geom as geom,
@@ -302,7 +302,7 @@ def station_viewer():
     """Test for form"""
     name = request.args["address"]
     stations = get_zipcode_stations(name)
-    stations['coordinate'] = 'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
+    stations['coordinate'] = 'end_point='+stations['name'].astype(str)+'&'+'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
     bounds = get_bounds(stations)
 
     #genetrate folium map
@@ -350,15 +350,35 @@ def get_map_directions(start_lng, start_lat, end_lng, end_lat):
     return routes.iloc[:1].to_json()
 
 
+def get_map_instructions(start_lng, start_lat, end_lng, end_lat):
+#retrieve instructions
+    directions_resp = requests.get(
+        f"https://api.mapbox.com/directions/v5/mapbox/cycling/{start_lng},{start_lat};{end_lng},{end_lat}",
+        params={
+            "access_token": MAPBOX_TOKEN,
+            "geometries": "geojson",
+            "steps": "true",
+            "alternatives": "true",
+        },
+    )
+    instructions=[]
+    for step in directions_resp.json()['routes'][0]['legs'][0]['steps']:
+        instructions.append(f"{step['maneuver']['instruction']}")
+    #listToStr = '<br>'.join(map(str, instruction))
+    return instructions
+
+
 @app.route("/cycling", methods=["GET"])
 def cycling():
     name = request.args["address"]
+    end_name=request.args["end_point"]
     end_lng = request.args["end_lng"]
     end_lat = request.args["end_lat"]
     end_lng = float(end_lng)
     end_lat = float(end_lat)
     start_lng=get_address(name)[1]
     start_lat=get_address(name)[0]
+
 
     #get coordinates of start and end point
     map_directions, geojson_str = get_static_map(
@@ -369,20 +389,30 @@ def cycling():
     )
     logging.warning("Map directions %s", str(map_directions))
 
-   
-    #logging.warning(cycle_map)
+
+    #retrieve instructions
+    instructions = get_map_instructions(
+        start_lng=start_lng,
+        start_lat=start_lat,
+        end_lng=end_lng,
+        end_lat=end_lat,
+    )
+
 
     # generate interactive map
     return render_template(
-        "bike_route.html",
+        "page4.html",
         mapbox_token=MAPBOX_TOKEN,
         geojson_str=geojson_str,
+        end_name=end_name,
+        name=name,
         start_lng=start_lng,
         start_lat=start_lng,
         end_lng=end_lng,
         end_lat=end_lat,
         center_lng=(start_lng + end_lng) / 2,
         center_lat=(start_lat + end_lat) / 2,
+        instructions=instructions
     )
 
 
