@@ -333,7 +333,7 @@ def get_static_map(start_lng, start_lat, end_lng, end_lat):
 
 def get_map_directions(start_lng, start_lat, end_lng, end_lat):
     directions_resp = requests.get(
-        f"https://api.mapbox.com/directions/v5/mapbox/cycling/{start_lng},{start_lat};{end_lng},{end_lat}",
+        f"https://api.mapbox.com/directions/v5/mapbox/walking/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
             "access_token": MAPBOX_TOKEN,
             "geometries": "geojson",
@@ -353,7 +353,7 @@ def get_map_directions(start_lng, start_lat, end_lng, end_lat):
 def get_map_instructions(start_lng, start_lat, end_lng, end_lat):
 #retrieve instructions
     directions_resp = requests.get(
-        f"https://api.mapbox.com/directions/v5/mapbox/cycling/{start_lng},{start_lat};{end_lng},{end_lat}",
+        f"https://api.mapbox.com/directions/v5/mapbox/walking/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
             "access_token": MAPBOX_TOKEN,
             "geometries": "geojson",
@@ -368,8 +368,8 @@ def get_map_instructions(start_lng, start_lat, end_lng, end_lat):
     return instructions
 
 
-@app.route("/cycling", methods=["GET"])
-def cycling():
+@app.route("/walking", methods=["GET"])
+def walking():
     name = request.args["address"]
     end_name=request.args["end_point"]
     end_lng = request.args["end_lng"]
