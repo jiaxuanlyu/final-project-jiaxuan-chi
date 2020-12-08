@@ -240,13 +240,6 @@ def get_zipcode_names(add):
     return names
 
 
-def get_bounds(geodataframe):
-    """returns list of sw, ne bounding box pairs"""
-    bounds = geodataframe.geom.total_bounds
-    bounds = [[bounds[0], bounds[1]], [bounds[2], bounds[3]]]
-    return bounds
-
-
 def get_num_stations(add):
     """Get number of stations in a zipcode"""
     name=get_zipcode_names(add)
@@ -303,7 +296,6 @@ def station_viewer():
     name = request.args["address"]
     stations = get_zipcode_stations(name)
     stations['coordinate'] = 'end_point='+stations['name'].astype(str)+'&'+'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
-    bounds = get_bounds(stations)
 
     #genetrate folium map
     station_coordinates = stations[["lat", "lon"]].values.tolist()
@@ -367,8 +359,6 @@ def hospital_viewer():
     name = request.args["address"]
     hospitals = get_zipcode_hospitals(name)
     hospitals['coordinate'] = 'end_point='+hospitals['name'].astype(str)+'&'+'end_lng=' + hospitals['lon'].astype(str)+'&'+'end_lat='+hospitals['lat'].astype(str)
-    bounds = get_bounds(hospitals)
-
     #genetrate folium map
     hospitals_coordinates = hospitals[["lat", "lon"]].values.tolist()
 
