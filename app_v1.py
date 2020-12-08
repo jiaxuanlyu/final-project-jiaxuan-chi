@@ -289,7 +289,7 @@ def get_zipcode_stations(add):
 
 
 def make_folium_map(station_coord):
-    map = folium.Map(location=station_coord[0], zoom_start=13)
+    map = folium.Map(location=station_coord[0], tiles='Cartodb Positron', zoom_start=13)
     for point in range(0, len(station_coord)):
         folium.Marker(station_coord[point]).add_to(map)
 
