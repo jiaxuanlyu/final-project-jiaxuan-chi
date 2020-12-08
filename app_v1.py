@@ -330,6 +330,26 @@ def get_num_hospitals(add):
     return resp["num_hospitals"]
 
 
+def find_5near_hospitals(lon, lat):
+    """
+    Find 5 closest hospitals.
+    """
+    engine = get_sql_engine()
+    hospital5 = text(
+        """
+        SELECT 
+       "HOSPITAL_NAME" AS name, "STREET_ADDRESS" as address, 
+       "PHONE_NUMBER" as contact, geom,
+	   ST_X(geom) AS lon, ST_Y(geom) AS lat,
+	   ST_Distance(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, geom::geography) AS distance
+       FROM philly_hospital
+       ORDER BY 7 ASC
+       LIMIT 5
+    """
+    )
+    near_hospital = gpd.read_postgis(hospital5, con=engine, params={"lon": lon, "lat": lat})
+    return near_hospital
+
 
 
 def get_zipcode_hospitals(add):
@@ -359,20 +379,33 @@ def hospital_viewer():
     name = request.args["address"]
     hospitals = get_zipcode_hospitals(name)
     hospitals['coordinate'] = 'end_point='+hospitals['name'].astype(str)+'&'+'end_lng=' + hospitals['lon'].astype(str)+'&'+'end_lat='+hospitals['lat'].astype(str)
-    #genetrate folium map
-    hospitals_coordinates = hospitals[["lat", "lon"]].values.tolist()
 
-    map=make_folium_map(hospitals_coordinates)
+    
+    if len(hospitals) > 0:
 
+        #genetrate folium map
+        hospitals_coordinates = hospitals[["lat", "lon"]].values.tolist()
 
-    # generate interactive map
+        map=make_folium_map(hospitals_coordinates)
 
-    return render_template(
-        "page3_2h.html",
-        num_hospitals=get_num_hospitals(name),
+        return render_template(
+            "page3_2h.html",
+            num_hospitals=get_num_hospitals(name),
+            address=name,
+            hospitals=hospitals[["name", "address", "contact", "coordinate"]].values,
+            map=map._repr_html_()
+        )
+    else:
+
+        lng=get_address(name)[1]
+        lat=get_address(name)[0]
+        near_hospital = find_5near_hospitals(lng, lat)
+        near_hospital['coordinate'] = 'end_point='+near_hospital['name'].astype(str)+'&'+'end_lng=' + near_hospital['lon'].astype(str)+'&'+'end_lat='+near_hospital['lat'].astype(str)
+        
+        return render_template(
+        "page3_2h_nohospital.html",
         address=name,
-        hospitals=hospitals[["name", "address", "contact", "coordinate"]].values,
-        map=map._repr_html_()
+        near_hospital_table=near_hospital[["name", "address", "contact", "coordinate", "distance"]].values,
     )
 
 
