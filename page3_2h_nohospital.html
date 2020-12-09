@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Nearest Hospitals</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+.container {
+    max-width: 1280px;
+}
+
+</style>
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+</head>
+<body>
+  <h3>There is no hospital within the zipcode of {{address}}</h3>
+    <h3>5 Nearest Hospitals from {{address}}</h3>
+    <section class="section">
+        <div class="container">
+          <div class="row">
+              <div class="address-list">
+                  <table>
+                      <thead>
+                          <th>Name</th>
+                          <th>Address</th>
+                          <th>Contact Info</th>
+                          <th>Route</th>
+                          <th>Distance</th>
+                      </thead>
+                      <tbody>
+                      {% for row in near_hospital_table %}
+                      <tr>
+                        {% for col in row %}
+                        {% if loop.index != 4 %}
+                            <td>{{ col }}</td>
+                        {% else %}
+                            <td><a href="http://127.0.0.1:5000/driving?address={{ address }}&{{ col }}">Go</a></td>
+                        {% endif %}
+                        {% endfor %}
+                      </tr>
+                      {% endfor %}
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+        </div>
+    </section>
+
+
+    <section class="section section-c">
+        <div class="container">
+            <div class="row">
+                <a class="button button-primary" href="/">Enter Another Address</a>
+            </div>
+        </div>
+    </section>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

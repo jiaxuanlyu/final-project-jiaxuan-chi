@@ -197,28 +197,22 @@ def covid_map(geojson, add):
     return m
 
 
-
-@app.route("/covidviewer", methods=["GET"])
-def covid_viewer():
+#get zipcode from entering address
+def zipcode_validation(add):
+    """Gets the zipcode data of your input address"""
+    lng=get_address(add)[1]
+    lat=get_address(add)[0]
+    engine = get_sql_engine()
+    query = text(
+        """
+        SELECT
+        code
+        FROM philly_zipcode
+        WHERE ST_Intersects(geom, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326))
     """
-    Get the url page based on the entering address.
-    """
-    name = request.args["address"]
-    pzip = zip_geom() #get the Philly zipcode data
-    cr = covid_realtime() #get the covid real time data
-    output1 = merge_table(cr, pzip) #merge two table together by zipcode
-    output2= normalize(output1) #normalize the covid data
-    covid_json = to_geojson(output2) #make the geodataframe to geojson
-
-    figure = covid_map(covid_json, name)
-    curr_time = datetime.now().strftime("%B %d, %Y")
-
-    return render_template(
-        "page2.html",
-        name=name,
-        map=figure._repr_html_(),
-        curr_time = curr_time
     )
+    resp = engine.execute(query,lng=lng, lat=lat).fetchall()
+    return resp
 
 
 #get zipcode from entering address
@@ -239,6 +233,34 @@ def get_zipcode_names(add):
     # get a list of names
     names = [row["code"] for row in resp][0]
     return names
+
+
+@app.route("/covidviewer", methods=["GET"])
+def covid_viewer():
+    """
+    Get the url page based on the entering address.
+    """
+    name = request.args["address"]
+    zip_code = zipcode_validation(name)
+    if len(zip_code) > 0:
+        pzip = zip_geom() #get the Philly zipcode data
+        cr = covid_realtime() #get the covid real time data
+        output1 = merge_table(cr, pzip) #merge two table together by zipcode
+        output2= normalize(output1) #normalize the covid data
+        covid_json = to_geojson(output2) #make the geodataframe to geojson
+
+        figure = covid_map(covid_json, name)
+        curr_time = datetime.now().strftime("%B %d, %Y")
+
+        return render_template(
+            "page2.html",
+            name=name,
+            map=figure._repr_html_(),
+            curr_time = curr_time
+        )
+    else:
+        return render_template(
+        "page1_invalid_input.html")
 
 
 #get the number of bike stations within given zipcode
@@ -343,7 +365,7 @@ def station_viewer():
         lat=get_address(name)[0]
         near_bike = find_5near_stations(lng, lat)
         near_bike['coordinate'] = 'end_point='+near_bike['name'].astype(str)+'&'+'end_lng=' + near_bike['lon'].astype(str)+'&'+'end_lat='+near_bike['lat'].astype(str)
-        
+
     return render_template(
     "page3_1b_nobike.html",
     address=name,
@@ -375,8 +397,8 @@ def find_5near_hospitals(lon, lat):
     engine = get_sql_engine()
     hospital5 = text(
         """
-        SELECT 
-       "HOSPITAL_NAME" AS name, "STREET_ADDRESS" as address, 
+        SELECT
+       "HOSPITAL_NAME" AS name, "STREET_ADDRESS" as address,
        "PHONE_NUMBER" as contact, geom,
 	   ST_X(geom) AS lon, ST_Y(geom) AS lat,
 	   ST_Distance(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, geom::geography) AS distance
@@ -396,8 +418,8 @@ def get_zipcode_hospitals(add):
     engine = get_sql_engine()
     hospital_info = text(
         """
-        SELECT 
-	    "HOSPITAL_NAME" AS name, "STREET_ADDRESS" as address, 
+        SELECT
+	    "HOSPITAL_NAME" AS name, "STREET_ADDRESS" as address,
         "PHONE_NUMBER" as contact, geom,
         ST_X(geom) AS lon, ST_Y(geom) AS lat
         FROM philly_hospital
@@ -418,7 +440,7 @@ def hospital_viewer():
     hospitals = get_zipcode_hospitals(name)
     hospitals['coordinate'] = 'end_point='+hospitals['name'].astype(str)+'&'+'end_lng=' + hospitals['lon'].astype(str)+'&'+'end_lat='+hospitals['lat'].astype(str)
 
-    
+
     if len(hospitals) > 0:
 
         #genetrate folium map
@@ -439,18 +461,12 @@ def hospital_viewer():
         lat=get_address(name)[0]
         near_hospital = find_5near_hospitals(lng, lat)
         near_hospital['coordinate'] = 'end_point='+near_hospital['name'].astype(str)+'&'+'end_lng=' + near_hospital['lon'].astype(str)+'&'+'end_lat='+near_hospital['lat'].astype(str)
-        
+
         return render_template(
         "page3_2h_nohospital.html",
         address=name,
         near_hospital_table=near_hospital[["name", "address", "contact", "coordinate", "distance"]].values,
     )
-
-
-
-
-
-
 
 
 def get_static_map(start_lng, start_lat, end_lng, end_lat):
@@ -481,10 +497,56 @@ def get_map_directions(start_lng, start_lat, end_lng, end_lat):
     return routes.iloc[:1].to_json()
 
 
+def get_driving_map(start_lng, start_lat, end_lng, end_lat):
+    """"""
+    geojson_str = get_map_directions(start_lng, start_lat, end_lng, end_lat)
+    return (
+        f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+        f"geojson({geojson_str})/auto/640x640?access_token={MAPBOX_TOKEN}"
+    ), geojson_str
+
+
 def get_map_instructions(start_lng, start_lat, end_lng, end_lat):
 #retrieve instructions
     directions_resp = requests.get(
         f"https://api.mapbox.com/directions/v5/mapbox/walking/{start_lng},{start_lat};{end_lng},{end_lat}",
+        params={
+            "access_token": MAPBOX_TOKEN,
+            "geometries": "geojson",
+            "steps": "true",
+            "alternatives": "true",
+        },
+    )
+    instructions=[]
+    for step in directions_resp.json()['routes'][0]['legs'][0]['steps']:
+        instructions.append(f"{step['maneuver']['instruction']}")
+    #listToStr = '<br>'.join(map(str, instruction))
+    return instructions
+
+
+def get_driving_directions(start_lng, start_lat, end_lng, end_lat):
+    directions_resp = requests.get(
+        f"https://api.mapbox.com/directions/v5/mapbox/driving/{start_lng},{start_lat};{end_lng},{end_lat}",
+        params={
+            "access_token": MAPBOX_TOKEN,
+            "geometries": "geojson",
+            "steps": "false",
+            "alternatives": "true",
+        },
+    )
+    routes = gpd.GeoDataFrame(
+        geometry=[
+            shape(directions_resp.json()["routes"][idx]["geometry"])
+            for idx in range(len(directions_resp.json()["routes"]))
+        ]
+    )
+    return routes.iloc[:1].to_json()
+
+
+def get_driving_instructions(start_lng, start_lat, end_lng, end_lat):
+#retrieve instructions
+    directions_resp = requests.get(
+        f"https://api.mapbox.com/directions/v5/mapbox/driving/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
             "access_token": MAPBOX_TOKEN,
             "geometries": "geojson",
@@ -543,9 +605,58 @@ def walking():
         end_lat=end_lat,
         center_lng=(start_lng + end_lng) / 2,
         center_lat=(start_lat + end_lat) / 2,
-        instructions=instructions
+        instructions=instructions,
+        method = 'Walking'
     )
 
+
+@app.route("/driving", methods=["GET"])
+def driving():
+    name = request.args["address"]
+    end_name=request.args["end_point"]
+    end_lng = request.args["end_lng"]
+    end_lat = request.args["end_lat"]
+    end_lng = float(end_lng)
+    end_lat = float(end_lat)
+    start_lng=get_address(name)[1]
+    start_lat=get_address(name)[0]
+
+
+    #get coordinates of start and end point
+    map_directions, geojson_str = get_driving_map(
+        start_lng=start_lng,
+        start_lat=start_lat,
+        end_lng=end_lng,
+        end_lat=end_lat,
+    )
+    logging.warning("Map directions %s", str(map_directions))
+
+
+    #retrieve instructions
+    instructions = get_driving_instructions(
+        start_lng=start_lng,
+        start_lat=start_lat,
+        end_lng=end_lng,
+        end_lat=end_lat,
+    )
+
+
+    # generate interactive map
+    return render_template(
+        "page4.html",
+        mapbox_token=MAPBOX_TOKEN,
+        geojson_str=geojson_str,
+        end_name=end_name,
+        name=name,
+        start_lng=start_lng,
+        start_lat=start_lng,
+        end_lng=end_lng,
+        end_lat=end_lat,
+        center_lng=(start_lng + end_lng) / 2,
+        center_lat=(start_lat + end_lat) / 2,
+        instructions=instructions,
+        method = 'Driving'
+    )
 
 
 # 404 page example
