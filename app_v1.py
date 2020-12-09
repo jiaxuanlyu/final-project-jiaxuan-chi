@@ -56,7 +56,7 @@ def index():
 def get_sql_engine():
     return create_engine(f"postgresql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
 
-
+#get lon and lat from entering address
 def get_address(address):
 
     geocoding_call = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
@@ -106,7 +106,7 @@ def merge_table(t1, t2):
     covid_zip.columns = ["zip_code", "covid_cases", "time", "geometry"]
     return covid_zip
 
-
+#normalize covid value
 def normalize(merged_table):
     """
     Normalize the covid data to used them in matplotlib color scheme.
@@ -221,6 +221,7 @@ def covid_viewer():
     )
 
 
+#get zipcode from entering address
 def get_zipcode_names(add):
     """Gets the zipcode of your input address"""
     lng=get_address(add)[1]
@@ -240,6 +241,7 @@ def get_zipcode_names(add):
     return names
 
 
+#get the number of bike stations within given zipcode
 def get_num_stations(add):
     """Get number of stations in a zipcode"""
     name=get_zipcode_names(add)
@@ -258,7 +260,7 @@ def get_num_stations(add):
     return resp["num_stations"]
 
 
-
+#get all bike stations within given zipcode
 def get_zipcode_stations(add):
     """Get all stations for a zipcode"""
     name=get_zipcode_names(add)
@@ -281,6 +283,7 @@ def get_zipcode_stations(add):
     return stations
 
 
+#make a folium map for stations
 def make_folium_map(station_coord):
     map = folium.Map(location=station_coord[0], tiles='Cartodb Positron', zoom_start=13)
     for point in range(0, len(station_coord)):
@@ -292,7 +295,7 @@ def make_folium_map(station_coord):
 # station viewer page
 @app.route("/stationviewer", methods=["GET"])
 def station_viewer():
-    """Test for form"""
+    """Get the url page that gives bike station info and related map."""
     name = request.args["address"]
     stations = get_zipcode_stations(name)
     stations['coordinate'] = 'end_point='+stations['name'].astype(str)+'&'+'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
@@ -330,6 +333,7 @@ def get_num_hospitals(add):
     return resp["num_hospitals"]
 
 
+#find 5 nearest hospital
 def find_5near_hospitals(lon, lat):
     """
     Find 5 closest hospitals.
@@ -351,7 +355,7 @@ def find_5near_hospitals(lon, lat):
     return near_hospital
 
 
-
+#get all hospitals within a given zipcode
 def get_zipcode_hospitals(add):
     """Get all hospitals within a zipcode"""
     name=get_zipcode_names(add)
@@ -375,7 +379,7 @@ def get_zipcode_hospitals(add):
 # hospital viewer page
 @app.route("/hospitalviewer", methods=["GET"])
 def hospital_viewer():
-    """Test for form"""
+    """Get a url that gives hospital info and related map."""
     name = request.args["address"]
     hospitals = get_zipcode_hospitals(name)
     hospitals['coordinate'] = 'end_point='+hospitals['name'].astype(str)+'&'+'end_lng=' + hospitals['lon'].astype(str)+'&'+'end_lat='+hospitals['lat'].astype(str)
