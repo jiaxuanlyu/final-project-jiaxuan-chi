@@ -5,7 +5,7 @@
   <!-- Basic Page Needs
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
-  <title>Hospital Viewer</title>
+  <title>Nearest Bike Stations</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -34,48 +34,17 @@
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 
 </head>
-<body>
-    <section class="section hero section-a">
-        <div class="container">
-            <div class="row">
-                <h1>Hospitals near {{ address }}</h1>
-            </div>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-          <div class="row">
-              <div class="five columns address-list">
-                  <table>
-                      <thead>
-                          <th>Name</th>
-                          <th>Address</th>
-                          <th>Contact Info</th>
-                          <th>Route</th>
-                      </thead>
-                      <tbody>
-                      {% for row in hospitals %}
-                      <tr>
-                        {% for col in row %}
-                        {% if loop.index != 4 %}
-                            <td>{{ col }}</td>
-                        {% else %}
-                            <td><a href="http://127.0.0.1:5000/driving?address={{ address }}&{{ col }}">Go</a></td>
-                        {% endif %}
-                        {% endfor %}
-                      </tr>
-                      {% endfor %}
-                      </tbody>
-                  </table>
-              </div>
 
-              <div class="seven columns">
-                  <h3><b>{{ num_hospitals }}</b> Hospitals </h3>
-                  {{map | safe}}
-              </div>
-          </div>
-        </div>
+<body>
+    <section class="section">
+      <div class="container">
+      <h3>Oops, our little penguin got lost</h3>
+         <h3>Please try another address within Philly :)</h3>
+         <img src="https://media.giphy.com/media/7SIdExk63rTPXhbbbt/giphy.gif"/>
+      </div>
     </section>
+
+
     <section class="section section-c">
         <div class="container">
             <div class="row">
