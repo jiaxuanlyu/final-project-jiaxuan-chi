@@ -260,6 +260,26 @@ def get_num_stations(add):
     return resp["num_stations"]
 
 
+#find 5 nearest bike stations
+def find_5near_stations(lon, lat):
+    """
+    Find 5 closest Indego Bike Stations.
+    """
+    engine = get_sql_engine()
+    bikestation5 = text(
+        """
+        SELECT name, "addressStreet" as address,
+       "bikesAvailable" as available_bikes, geom,
+	   ST_X(geom) as lon, ST_Y(geom)as lat,
+	   ST_Distance(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, geom::geography) AS distance
+       FROM indego_rt1130
+       ORDER BY 7 ASC
+       LIMIT 5
+        """
+    )
+    near_bike = gpd.read_postgis(bikestation5, con=engine, params={"lon": lon, "lat": lat})
+
+
 #get all bike stations within given zipcode
 def get_zipcode_stations(add):
     """Get all stations for a zipcode"""
@@ -298,23 +318,37 @@ def station_viewer():
     """Get the url page that gives bike station info and related map."""
     name = request.args["address"]
     stations = get_zipcode_stations(name)
-    stations['coordinate'] = 'end_point='+stations['name'].astype(str)+'&'+'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
 
-    #genetrate folium map
-    station_coordinates = stations[["lat", "lon"]].values.tolist()
+    if len(stations) > 0:
+        stations['coordinate'] = 'end_point='+stations['name'].astype(str)+'&'+'end_lng=' + stations['lon'].astype(str)+'&'+'end_lat='+stations['lat'].astype(str)
 
-    map=make_folium_map(station_coordinates)
+        #genetrate folium map
+        station_coordinates = stations[["lat", "lon"]].values.tolist()
+
+        map=make_folium_map(station_coordinates)
 
 
-    # generate interactive map
+        # generate interactive map
 
+        return render_template(
+            "page3.html",
+            num_stations=get_num_stations(name),
+            address=name,
+            stations=stations[["name", "address", "available_bikes", 'coordinate']].values,
+            map=map._repr_html_()
+        )
+
+    else:
+        lng=get_address(name)[1]
+        lat=get_address(name)[0]
+        near_bike = find_5near_stations(lng, lat)
+        near_bike['coordinate'] = 'end_point='+near_bike['name'].astype(str)+'&'+'end_lng=' + near_bike['lon'].astype(str)+'&'+'end_lat='+near_bike['lat'].astype(str)
+        
     return render_template(
-        "page3.html",
-        num_stations=get_num_stations(name),
-        address=name,
-        stations=stations[["name", "address", "available_bikes", 'coordinate']].values,
-        map=map._repr_html_()
-    )
+    "page3_1b_nobike.html",
+    address=name,
+    near_bike_table=near_bike[["name", "address", "available_bikes", "coordinate", "distance"]].values)
+
 
 
 #get num hospitals
