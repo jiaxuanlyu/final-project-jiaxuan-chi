@@ -574,6 +574,108 @@ def fmarket_viewer():
 
 
 
+#get number of Chinese Takeouts
+def get_num_takeouts(add):
+    """
+    Get the number of Chinese Takesouts within a zipcode.
+    """
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    number_takeouts = text(
+        """
+        SELECT COUNT("NAME") as num_takeouts
+        FROM chinese_takeout
+        WHERE "ZIP" = :name
+        """
+    )
+    resp = engine.execute(number_takeouts, name=name).fetchone()
+    return resp["num_takeouts"]
+
+
+
+#find 5 nearest Chinese takeouts
+def find_5near_takeouts(lon, lat):
+    """
+    Find 5 closest Chinese Takeouts.
+    """
+    engine = get_sql_engine()
+    ctakeouts5 = text(
+        """
+        SELECT 
+        "NAME" as name, "ADDRESS" as address,
+        geom, ST_X(geom) as lon, ST_Y(geom)as lat,
+        ST_Distance(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, geom::geography) AS distance
+        FROM chinese_takeout
+        ORDER BY 6 ASC
+        LIMIT 5
+        """
+    )
+    near_takeouts = gpd.read_postgis(ctakeouts5, con=engine, params={"lon": lon, "lat": lat})
+    return near_takeouts
+
+
+#get all farmer markets within given zipcode
+def get_zipcode_takeouts(add):
+    """Get all Chinese Takeouts for a zipcode"""
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    zipcode_takeouts = text(
+        """
+        SELECT 
+        "NAME" as name, "ADDRESS" as address,
+        geom, ST_X(geom) as lon, ST_Y(geom)as lat
+        FROM chinese_takeout
+        WHERE "ZIP" = :name
+
+    """
+    )
+    ctakeouts = gpd.read_postgis(zipcode_takeouts, con=engine, params={"name": name})
+    return ctakeouts
+
+
+
+
+# Chinese takeouts viewer page
+@app.route("/ctakeoutviewer", methods=["GET"])
+def ctakeout_viewer():
+    """Get the url page that gives Chinese takeouts info and related map."""
+    name = request.args["address"]
+    takeouts = get_zipcode_takeouts(name)
+
+    if len(takeouts) > 0:
+        takeouts['coordinate'] = 'end_point='+takeouts['name'].astype(str)+'&'+'end_lng=' + takeouts['lon'].astype(str)+'&'+'end_lat='+takeouts['lat'].astype(str)
+
+        #genetrate folium map
+        takeout_coordinates = takeouts[["lat", "lon"]].values.tolist()
+
+        map=make_folium_map(takeout_coordinates)
+
+
+        # generate interactive map
+
+        return render_template(
+            "page3_4t.html",
+            num_takeouts=get_num_takeouts(name),
+            address=name,
+            takeouts=takeouts[["name", "address", 'coordinate']].values,
+            map=map._repr_html_()
+        )
+
+    else:
+        lng=get_address(name)[1]
+        lat=get_address(name)[0]
+        near_takeouts = find_5near_takeouts(lng, lat)
+        near_takeouts['coordinate'] = 'end_point='+near_takeouts['name'].astype(str)+'&'+'end_lng=' + near_takeouts['lon'].astype(str)+'&'+'end_lat='+near_takeouts['lat'].astype(str)
+
+        return render_template(
+            "page3_4t_notakeout.html",
+            address=name,
+            near_takeout_table=near_takeouts[["name", "address", "coordinate", "distance"]].values)
+
+
+
+
+
 
 def get_static_map(start_lng, start_lat, end_lng, end_lat):
     """"""
