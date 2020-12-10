@@ -300,6 +300,8 @@ def find_5near_stations(lon, lat):
         """
     )
     near_bike = gpd.read_postgis(bikestation5, con=engine, params={"lon": lon, "lat": lat})
+    return near_bike
+
 
 
 #get all bike stations within given zipcode
@@ -366,10 +368,11 @@ def station_viewer():
         near_bike = find_5near_stations(lng, lat)
         near_bike['coordinate'] = 'end_point='+near_bike['name'].astype(str)+'&'+'end_lng=' + near_bike['lon'].astype(str)+'&'+'end_lat='+near_bike['lat'].astype(str)
 
-    return render_template(
-    "page3_1b_nobike.html",
-    address=name,
-    near_bike_table=near_bike[["name", "address", "available_bikes", "coordinate", "distance"]].values)
+        return render_template(
+        "page3_1b_nobike.html",
+        address=name,
+        near_bike_table=near_bike[["name", "address", "available_bikes", "coordinate", "distance"]].values)
+
 
 
 
