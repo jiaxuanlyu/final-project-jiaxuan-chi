@@ -472,6 +472,109 @@ def hospital_viewer():
     )
 
 
+
+#get number of farmers markers
+def get_num_markets(add):
+    """
+    Get the number of farmers markers within a zipcode.
+    """
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    number_markets = text(
+        """
+        SELECT COUNT("NAME") AS num_markets
+        FROM farmers_markets
+        WHERE "ZIP" = :name
+        """
+    )
+    resp = engine.execute(number_markets, name=name).fetchone()
+    return resp["num_markets"]
+
+
+
+#find 5 nearest farmers markets
+def find_5near_markets(lon, lat):
+    """
+    Find 5 closest farmers markets.
+    """
+    engine = get_sql_engine()
+    fmarkets5 = text(
+        """
+        SELECT 
+        "NAME" as name, "ADDRESS" as address,
+        "TIME" as time, geom,
+        ST_X(geom) as lon, ST_Y(geom)as lat,
+        ST_Distance(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, geom::geography) AS distance
+        FROM farmers_markets
+        ORDER BY 7 ASC
+        LIMIT 5
+        """
+    )
+    near_markets = gpd.read_postgis(fmarkets5, con=engine, params={"lon": lon, "lat": lat})
+    return near_markets
+
+
+
+#get all farmer markets within given zipcode
+def get_zipcode_markets(add):
+    """Get all stations for a zipcode"""
+    name=get_zipcode_names(add)
+    engine = get_sql_engine()
+    zipcode_markets = text(
+        """
+        SELECT 
+        "NAME" as name, "ADDRESS" as address,
+        "TIME" as time, geom,
+        ST_X(geom) as lon, ST_Y(geom)as lat
+        FROM farmers_markets
+        WHERE "ZIP" = :name
+    """
+    )
+    fmarkets = gpd.read_postgis(zipcode_markets, con=engine, params={"name": name})
+    return fmarkets
+
+
+
+# farmers markets viewer page
+@app.route("/fmarketviewer", methods=["GET"])
+def fmarket_viewer():
+    """Get the url page that gives bike station info and related map."""
+    name = request.args["address"]
+    markets = get_zipcode_markets(name)
+
+    if len(markets) > 0:
+        markets['coordinate'] = 'end_point='+markets['name'].astype(str)+'&'+'end_lng=' + markets['lon'].astype(str)+'&'+'end_lat='+markets['lat'].astype(str)
+
+        #genetrate folium map
+        market_coordinates = markets[["lat", "lon"]].values.tolist()
+
+        map=make_folium_map(market_coordinates)
+
+
+        # generate interactive map
+
+        return render_template(
+            "page3_3f.html",
+            num_markets=get_num_markets(name),
+            address=name,
+            markets=markets[["name", "address", "time", 'coordinate']].values,
+            map=map._repr_html_()
+        )
+
+    else:
+        lng=get_address(name)[1]
+        lat=get_address(name)[0]
+        near_markets = find_5near_markets(lng, lat)
+        near_markets['coordinate'] = 'end_point='+near_markets['name'].astype(str)+'&'+'end_lng=' + near_markets['lon'].astype(str)+'&'+'end_lat='+near_markets['lat'].astype(str)
+
+        return render_template(
+            "page3_3f_nomarkets.html",
+            address=name,
+            near_markets_table=near_markets[["name", "address", "time", "coordinate", "distance"]].values)
+
+
+
+
 def get_static_map(start_lng, start_lat, end_lng, end_lat):
     """"""
     geojson_str = get_map_directions(start_lng, start_lat, end_lng, end_lat)
