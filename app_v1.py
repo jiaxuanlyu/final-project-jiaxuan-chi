@@ -517,7 +517,7 @@ def find_5near_markets(lon, lat):
 
 #get all farmer markets within given zipcode
 def get_zipcode_markets(add):
-    """Get all stations for a zipcode"""
+    """Get all farmers markets for a zipcode"""
     name=get_zipcode_names(add)
     engine = get_sql_engine()
     zipcode_markets = text(
