@@ -538,7 +538,7 @@ def get_zipcode_markets(add):
 # farmers markets viewer page
 @app.route("/fmarketviewer", methods=["GET"])
 def fmarket_viewer():
-    """Get the url page that gives bike station info and related map."""
+    """Get the url page that gives farmers markets info and related map."""
     name = request.args["address"]
     markets = get_zipcode_markets(name)
 
