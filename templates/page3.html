@@ -60,7 +60,7 @@
                         {% if loop.index != 4 %}
                             <td>{{ col }}</td>
                         {% else %}
-                            <td><a href="http://127.0.0.1:5000/walking?address={{ address }}&{{ col }}">Go</a></td>
+                            <td><a href="{{ url_for( 'walking' )}}?address={{ address }}&{{ col }}">Go</a></td>
                         {% endif %}
                         {% endfor %}
                       </tr>
@@ -76,6 +76,17 @@
           </div>
         </div>
     </section>
+  
+  
+    <section class="section section-c">
+        <div class="container">
+            <div class="row">
+                <a class="button button-primary" href="{{ url_for('covid_viewer', address=address) }}">Select Another Destination</a>
+            </div>
+        </div>
+    </section>
+  
+  
     <section class="section section-c">
         <div class="container">
             <div class="row">
