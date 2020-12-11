@@ -82,7 +82,7 @@
   <section class="section section-c">
         <div class="container">
             <div class="row">
-                <a class="button button-primary" href="http://127.0.0.1:5000//covidviewer?address={{ address }}">Select Another Destination</a>
+                <a class="button button-primary" href="{{ url_for('covid_viewer', address=address) }}">Select Another Destination</a>
             </div>
         </div>
     </section>
