@@ -14,44 +14,71 @@ The customers start at entering their address in Philadelphia, then they will ge
 <h2>Data</h2>
 
 <h3>Covid Data</h3>
+
 <b>Source</b>: Open Data Philly & Carto
+
 <b>Accumulated COVID cases by zipcode:</b> https://www.opendataphilly.org/dataset/covid-cases/resource/a8761883-f0c1-4d20-8369-f5050af8b85a
+
 <b>How to host</b>: python API request
+
 The accumulated COVID cases by Philly zipcode is requested in real-time by using python API request method. 
 
+
 <br>
 <br>
+
 
 <h3>Bike Data </h3>
+
 <b>Source</b>: <a href="https://www.rideindego.com/about/data/">Indego</a>
+
 <b>Live station Geojson:</b>https://kiosks.bicycletransit.workers.dev/phl
+
 <b>How to host</b>: PostgreSQL on AWS RDS
+
 
 <br>
 <br>
+
 
 <h3>Hospital Data </h3>
+
 <b>Source</b>: Open Data Philly
+
 <b>Philadelphia Hospitals:</b>https://www.opendataphilly.org/dataset/philadelphia-hospitals
+
 <b>How to host</b>: PostgreSQL on AWS RDS
+
 
 <br>
 <br>
+
 
 <h3>Farmers Markets</h3>
+
 <b>Source</b>: Open Data Philly
+
 <b>Farmers Markets Locations:</b>https://www.opendataphilly.org/dataset/farmers-markets-locations
+
 <b>How to host</b>: PostgreSQL on AWS RDS
+
 
 <br>
 <br>
+
 
 <h3>Chinese Takeouts</h3>
+
 <b>Souce</b>: Open Data Philly
+
 <b>Healthy Chinese Takeout:</b>https://www.opendataphilly.org/dataset/healthy-chinese-takeout
+
 <b>How to host</b>: PostgreSQL on AWS RDS
 
+
+
 <h2>Wireframes</h2>
+
 <b>Figma Links</b>:
     <ul>
         <li>Editale link: https://www.figma.com/file/pHK7OMNewEXZMoOqrEHVcR/Travel-Navigation?node-id=0%3A1 </li>
