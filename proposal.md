@@ -1,10 +1,12 @@
 # MUSA 509 Final Project Proposal
+## APP: Daily Routes
 ## memebers : Jiaxuan Lyu, Chi Zhang
 
 <br>
 <h2><b>Abstract:</b></h2>
 <p>
-Due to the current COVID pandemic, we aim to make an app that could help people to plan their daily trips. COVID-19 is caused by a new coronavirus (called SARS-CoV-2) and will generate symptoms such as fever, cough, trouble breathing and etc. (<a href="https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html">CDC, 2020</a>). The World Health Organization suggests people to avoid COVID by wearing masks and keeping social distance. More guidance could be found <a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public">here</a> (WHO, 2020). Therefore, regulating trips before head helps people to choose more efficient transportation mode and to decrease contact with others. In this project, the study city is Philadelphia. The function of our app will mimic what google map did: when the users are searching for the routes from starting point to destinations, they will get an interactive map shows different route choices. Additionally, they could choose to travel by walking, cycling or by bus. Moreover, the surrounding number of positive COVID cases will be visualized to help them regulate their trips.  
+Due to the current COVID pandemic, we aim to make an app that could help people to search for their daily trips. With a real-time COVID map shows where they are, there are also four listed choices which are divided into two groups. One group is for amenities, which are Indego bike stations and hospitals. Another group is for food, which includes farmers markets and Chinese takeout. 
+The customers start at entering their address in Philadelphia, then they will get choices to select either bike stations, hospitals, farmers markets or Chinese takeout. After they decide their destinations, they will get a map shows where the choices are, and a table shows related information about their chosen destination. By clicking on whether they would like to drive or walk there, they will get detailed instructions on the route. One notice is that they will only have choice of walking if they want to go to near bike stations. If there are no ideal amenities or food choices, the closest five choices will be listed, and then they could know how to drive there.  
 </p>
 
 <br>
