@@ -329,6 +329,7 @@ def get_zipcode_stations(add):
 
 #make a folium map for stations
 def make_folium_map(station_coord):
+    """Plot a Folium map"""
     map = folium.Map(location=station_coord[0], tiles='Cartodb Positron', zoom_start=13)
     for point in range(0, len(station_coord)):
         folium.Marker(station_coord[point]).add_to(map)
@@ -500,7 +501,7 @@ def find_5near_markets(lon, lat):
     engine = get_sql_engine()
     fmarkets5 = text(
         """
-        SELECT 
+        SELECT
         "NAME" as name, "ADDRESS" as address,
         "TIME" as time, geom,
         ST_X(geom) as lon, ST_Y(geom)as lat,
@@ -522,7 +523,7 @@ def get_zipcode_markets(add):
     engine = get_sql_engine()
     zipcode_markets = text(
         """
-        SELECT 
+        SELECT
         "NAME" as name, "ADDRESS" as address,
         "TIME" as time, geom,
         ST_X(geom) as lon, ST_Y(geom)as lat
@@ -601,7 +602,7 @@ def find_5near_takeouts(lon, lat):
     engine = get_sql_engine()
     ctakeouts5 = text(
         """
-        SELECT 
+        SELECT
         "NAME" as name, "ADDRESS" as address,
         geom, ST_X(geom) as lon, ST_Y(geom)as lat,
         ST_Distance(ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, geom::geography) AS distance
@@ -621,7 +622,7 @@ def get_zipcode_takeouts(add):
     engine = get_sql_engine()
     zipcode_takeouts = text(
         """
-        SELECT 
+        SELECT
         "NAME" as name, "ADDRESS" as address,
         geom, ST_X(geom) as lon, ST_Y(geom)as lat
         FROM chinese_takeout
@@ -678,7 +679,7 @@ def ctakeout_viewer():
 
 
 def get_static_map(start_lng, start_lat, end_lng, end_lat):
-    """"""
+    """input coordinates of start and end points and retrieve a static map with route"""
     geojson_str = get_map_directions(start_lng, start_lat, end_lng, end_lat)
     return (
         f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
@@ -687,6 +688,7 @@ def get_static_map(start_lng, start_lat, end_lng, end_lat):
 
 
 def get_map_directions(start_lng, start_lat, end_lng, end_lat):
+    """input coordinates of start and end points and retrieve walking route"""
     directions_resp = requests.get(
         f"https://api.mapbox.com/directions/v5/mapbox/walking/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
@@ -705,17 +707,8 @@ def get_map_directions(start_lng, start_lat, end_lng, end_lat):
     return routes.iloc[:1].to_json()
 
 
-def get_driving_map(start_lng, start_lat, end_lng, end_lat):
-    """"""
-    geojson_str = get_map_directions(start_lng, start_lat, end_lng, end_lat)
-    return (
-        f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
-        f"geojson({geojson_str})/auto/640x640?access_token={MAPBOX_TOKEN}"
-    ), geojson_str
-
-
 def get_map_instructions(start_lng, start_lat, end_lng, end_lat):
-#retrieve instructions
+    """input coordinates of start and end points and retrieve walking instructions"""
     directions_resp = requests.get(
         f"https://api.mapbox.com/directions/v5/mapbox/walking/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
@@ -732,7 +725,17 @@ def get_map_instructions(start_lng, start_lat, end_lng, end_lat):
     return instructions
 
 
+def get_driving_map(start_lng, start_lat, end_lng, end_lat):
+    """input coordinates of start and end points and retrieve a map with driving route"""
+    geojson_str = get_driving_directions(start_lng, start_lat, end_lng, end_lat)
+    return (
+        f"https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+        f"geojson({geojson_str})/auto/640x640?access_token={MAPBOX_TOKEN}"
+    ), geojson_str
+
+
 def get_driving_directions(start_lng, start_lat, end_lng, end_lat):
+    """input coordinates of start and end points and retrieve driving route"""
     directions_resp = requests.get(
         f"https://api.mapbox.com/directions/v5/mapbox/driving/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
@@ -752,7 +755,7 @@ def get_driving_directions(start_lng, start_lat, end_lng, end_lat):
 
 
 def get_driving_instructions(start_lng, start_lat, end_lng, end_lat):
-#retrieve instructions
+    """input coordinates of start and end points and retrieve driving instructions"""
     directions_resp = requests.get(
         f"https://api.mapbox.com/directions/v5/mapbox/driving/{start_lng},{start_lat};{end_lng},{end_lat}",
         params={
@@ -771,6 +774,7 @@ def get_driving_instructions(start_lng, start_lat, end_lng, end_lat):
 
 @app.route("/walking", methods=["GET"])
 def walking():
+    """Get the url page showing the walking route and instruction to the destination."""
     name = request.args["address"]
     end_name=request.args["end_point"]
     end_lng = request.args["end_lng"]
@@ -820,6 +824,7 @@ def walking():
 
 @app.route("/driving", methods=["GET"])
 def driving():
+    """Get the url page showing the driving route and instruction to the destination."""
     name = request.args["address"]
     end_name=request.args["end_point"]
     end_lng = request.args["end_lng"]

@@ -36,40 +36,40 @@
 </head>
 
 <body>
-  <h3>There is no Indego Bike Stations within the zipcode of {{address}}</h3>
-    <h3>5 Nearest bike stations from {{address}}</h3>
-    <section class="section">
-        <div class="container">
-          <div class="row">
-              <div class="address-list">
-                  <table>
-                      <thead>
-                          <th>Name</th>
-                          <th>Address</th>
-                          <th>Available Bikes</th>
-                          <th>Route</th>
-                          <th>Distance</th>
-                      </thead>
-                      <tbody>
-                      {% for row in near_bike_table %}
-                      <tr>
-                        {% for col in row %}
-                        {% if loop.index != 4 %}
-                            <td>{{ col }}</td>
-                        {% else %}
-                            <td><a href="{{ url_for( 'walking' )}}?address={{ address }}&{{ col }}">Go</a></td>
-                        {% endif %}
-                        {% endfor %}
-                      </tr>
-                      {% endfor %}
-                      </tbody>
-                  </table>
+  <section class="section">
+    <div class="container">
+        <h3>There is no Indego Bike Stations within the zipcode of {{address}}</h3>
+        <h3>5 Nearest bike stations from {{address}}</h3>
+              <div class="row">
+                  <div class="address-list">
+                      <table>
+                          <thead>
+                              <th>Name</th>
+                              <th>Address</th>
+                              <th>Available Bikes</th>
+                              <th>Route</th>
+                              <th>Distance</th>
+                          </thead>
+                          <tbody>
+                          {% for row in near_bike_table %}
+                          <tr>
+                            {% for col in row %}
+                            {% if loop.index != 4 %}
+                                <td>{{ col }}</td>
+                            {% else %}
+                                <td><a href="{{ url_for( 'walking' )}}?address={{ address }}&{{ col }}">Go</a></td>
+                            {% endif %}
+                            {% endfor %}
+                          </tr>
+                          {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
               </div>
-          </div>
-        </div>
-    </section>
+            </div>
+        </section>
 
-  
+
 <section class="section section-c">
       <div class="container">
           <div class="row">
@@ -77,11 +77,11 @@
           </div>
       </div>
   </section>
-  
+
     <section class="section section-c">
         <div class="container">
             <div class="row">
-                <a class="button button-primary" href="/">Enter Another Address</a>
+                <a href="/"><button type="submit">Enter Another Address</button></a>
             </div>
         </div>
     </section>
