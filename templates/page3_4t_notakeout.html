@@ -55,7 +55,7 @@
                         {% if loop.index != 3 %}
                             <td>{{ col }}</td>
                         {% else %}
-                            <td><a href="{{ url_for( 'driving' )}}?address={{ address }}&{{ col }}>Go</a></td>
+                            <td><a href="{{ url_for( 'driving' )}}?address={{ address }}&{{ col }}">Go</a></td>
                         {% endif %}
                         {% endfor %}
                       </tr>
