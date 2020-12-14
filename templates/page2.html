@@ -54,13 +54,13 @@
                         <tbody>
                         <tr>
                             <td>Indego Bike Stations</td>
-                          <td> <a href="http://127.0.0.1:5000/stationviewer?address={{name}}">
+                          <td> <a href="{{ url_for('station_viewer') }}?address={{name}}">
                               <button type="submit">Select</button> </a>
                             </td>
                         </tr>
                         <tr>
                           <td>Hospitals</td>
-                            <td> <a href="http://127.0.0.1:5000/hospitalviewer?address={{name}}">
+                            <td> <a href="{{ url_for('hospital_viewer') }}?address={{name}}">
                               <button type="submit"> Select </button> </a>
                         </tr>
                         </tbody>
@@ -73,14 +73,14 @@
                           <tr>
                             <td>Farmers Markets</td>
                             <td>
-                              <a href="http://127.0.0.1:5000//fmarketviewer?address={{name}}">
+                              <a href="{{ url_for('fmarket_viewer') }}?address={{name}}">
                                 <button type="submit">Select</button> </a>
                             </td>
                           </tr>
                           <tr>
                             <td>Chinese Takeouts</td>
                             <td>
-                              <a href="http://127.0.0.1:5000//ctakeoutviewer?address={{name}}">
+                              <a href="{{ url_for('ctakeout_viewer') }}?address={{name}}">
                               <button type="submit">Select</button></a>
                             </td>
                           </tr>
