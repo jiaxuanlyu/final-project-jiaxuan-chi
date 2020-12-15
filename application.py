@@ -872,6 +872,17 @@ def driving():
     )
 
 
+			    
+@application.route("/bike_download", methods=["GET"])
+def bike_download():
+    """Download GeoJSON of data snapshot"""
+    name = request.args["address"]
+    stations = get_zipcode_stations(name)
+
+    return Response(stations.to_json(), 200, mimetype="application/json")
+			    
+			    
+
 # 404 page example
 @application.errorhandler(404)
 def page_not_found(err):
