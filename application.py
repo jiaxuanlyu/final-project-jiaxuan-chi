@@ -235,7 +235,7 @@ def get_zipcode_names(add):
     return names
 
 
-@app.route("/covidviewer", methods=["GET"])
+@application.route("/covidviewer", methods=["GET"])
 def covid_viewer():
     """
     Get the url page based on the entering address.
