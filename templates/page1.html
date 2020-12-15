@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Find your surroundings</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Red+Hat+Display&display=swap" rel="stylesheet">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+</head> 
+
+<style>
+    html { 
+        background: url(./static/images/bg4.png) no-repeat center center fixed; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+         -o-background-size: cover;
+        background-size: cover;
+    }
+
+    input[type=submit] {
+        display: inline-block;
+        height: 38px;
+        padding: 0 30px;
+        color: rgb(0, 33, 65);
+        text-align: center;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 38px;
+        letter-spacing: .1rem;
+        text-transform: uppercase;
+        text-decoration: none;
+        white-space: nowrap;
+        background-color: rgba(172, 204, 230, 0.7);
+        border-radius: 4px;
+        border: 1px solid rgb(0, 42, 77);
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+</style>
+
+
+
+
+
+
+
+
+<body>
+
+    <div class="section hero">
+        <div class="block">
+            <div class="row">
+                <h1 style="text-align:center;color: rgb(0, 0, 0);">Please enter your address</h1>
+            </div>
+        </div>
+    </div>
+    <div class="section" style="text-align:center"> 
+        <div class="block" >
+    <div class="interaction">
+        <form action="{{ url_for('covid_viewer') }}" method="get">
+              <div>
+                  <label style="font-size: 20px">Entering your address in Philadelphia</label>
+                  <input type="text" id="address" name="address"><br><br>
+              </div>
+              <input type="submit" value="Submit">
+          </form>
+    </div>
+
+      <div class="description" style="text-align:center; font-size: 20px">
+      <b>Do you want to find about your surroundings?</b><br>
+      <b>Would you like to go somewhere else? And want to how to go that place?</b><br>
+      <b>Please start by entering your address!</b>
+      </div>
+  </div>
+
+
+<br>
+<br>
+
+      <div class="intro" style="text-align:center; font-size: 20px">
+        <b>You could find:</b>
+        <ul>
+            <li>Indego Bike Stations</li>
+            <li>Hospitals</li>
+            <li>Farmers Markets</li>
+            <li>Chinese Takeout</li>
+        </ul>
+      </div>
+
+  </div>
+
+
+
+</div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+</body>
+</html>
