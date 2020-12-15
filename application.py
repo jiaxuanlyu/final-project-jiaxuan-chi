@@ -899,6 +899,17 @@ def fmarket_download():
 
     return Response(markets.to_json(), 200, mimetype="application/json")			    
 			    
+
+@application.route("/ctakeout_download", methods=["GET"])
+def ctakeout_download():
+    """Download GeoJSON of data snapshot"""
+    name = request.args["address"]
+    takeouts = get_zipcode_takeouts(name)
+
+    return Response(takeouts.to_json(), 200, mimetype="application/json")			    
+			    
+			    
+			    
 			    
 
 # 404 page example
