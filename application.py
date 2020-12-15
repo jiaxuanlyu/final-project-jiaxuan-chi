@@ -881,6 +881,14 @@ def bike_download():
 
     return Response(stations.to_json(), 200, mimetype="application/json")
 			    
+
+@application.route("/hospital_download", methods=["GET"])
+def hospital_download():
+    """Download GeoJSON of data snapshot"""
+    name = request.args["address"]
+    hospitals = get_zipcode_hospitals(name)
+
+    return Response(hospitals.to_json(), 200, mimetype="application/json")
 			    
 
 # 404 page example
