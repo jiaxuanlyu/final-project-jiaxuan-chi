@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Covid Map</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Red+Hat+Display&display=swap" rel="stylesheet">
+
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+  .container {
+      max-width: 1380px;
+  }
+
+  </style>
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+</head>
+<body>
+      <section class="section hero section-a">
+        <div class="container">
+            <div class="row">
+              <h1>Please select your destinations</h1>
+            <div>
+        <div>
+
+        </section>
+        <section class="section">
+            <div class="container">
+              <div class="row">
+                  <div class="four columns address-list">
+                    <table>
+                        <thead>
+                            <th>Amenity Types</th>
+                            <th>Choice</th>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Indego Bike Stations</td>
+                          <td> <a href="{{ url_for('station_viewer') }}?address={{name}}">
+                              <button type="submit">Select</button> </a>
+                            </td>
+                        </tr>
+                        <tr>
+                          <td>Hospitals</td>
+                            <td> <a href="{{ url_for('hospital_viewer') }}?address={{name}}">
+                              <button type="submit"> Select </button> </a>
+                        </tr>
+                        </tbody>
+                      
+                      <thead>
+                          <th>Food</th>
+                          <th>Choice</th>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Farmers Markets</td>
+                            <td>
+                              <a href="{{ url_for('fmarket_viewer') }}?address={{name}}">
+                                <button type="submit">Select</button> </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Chinese Takeouts</td>
+                            <td>
+                              <a href="{{ url_for('ctakeout_viewer') }}?address={{name}}">
+                              <button type="submit">Select</button></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="datasource">
+                      <p>Data Source</p>
+                      <ul>
+                        <li>Covid Data: <a href="https://www.opendataphilly.org/dataset/covid-cases/resource/a8761883-f0c1-4d20-8369-f5050af8b85a">OpenDataPhilly</a></li>
+                        <li>Indego Bike Data: <a href="https://kiosks.bicycletransit.workers.dev/phl">Bike Status at 11/30/2020</a></li>
+                        <li>Hospital Data: <a href="https://www.opendataphilly.org/dataset/philadelphia-hospitals">OpenDataPhilly</a></li>
+                        <li>Farmers Markets Data: <a href="https://www.opendataphilly.org/dataset/farmers-markets-locations">OpenDataPhilly</a></li>
+                        <li>Chinese Takeout Data: <a href="https://www.opendataphilly.org/dataset/healthy-chinese-takeout">OpenDataPhilly</a></li>
+                      </ul>
+                    </div>
+
+                </div>
+
+                <div id="covid map" class="eight columns">
+                    <h3>Covid Map</h3>
+                    <p>The map shows the accumulated covid cases by zip code, from March to {{curr_time}}.</p>
+                    {{map | safe}}
+
+                    <br>
+                    <br>
+
+                    <div class="row">
+                      <a class="button button-primary" href="/">Enter Another Address</a>
+                   </div>
+                </div>
+              </div>
+            </div>
+        </section>
+
+
+
+
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
