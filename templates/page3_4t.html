@@ -87,11 +87,16 @@
             </div>
         </div>
     </section>
-
+  
     <section class="section section-c">
         <div class="container">
             <div class="row">
-                <a href="/"><button type="submit">Enter Another Address</button></a>
+                <div class="five columns">
+                    <a href="/"><button type="submit">Enter Another Address</button></a>
+                </div>
+                <div class="seven columns">
+                    <a class="button button-primary" href="{{ url_for('ctakeout_download', address=address) }}">Download data</a>
+                </div>
             </div>
         </div>
     </section>
