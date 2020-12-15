@@ -235,32 +235,36 @@ def get_zipcode_names(add):
     return names
 
 
-@application.route("/covidviewer", methods=["GET"])
+@app.route("/covidviewer", methods=["GET"])
 def covid_viewer():
     """
     Get the url page based on the entering address.
     """
     name = request.args["address"]
-    zip_code = zipcode_validation(name)
-    if len(zip_code) > 0:
-        pzip = zip_geom() #get the Philly zipcode data
-        cr = covid_realtime() #get the covid real time data
-        output1 = merge_table(cr, pzip) #merge two table together by zipcode
-        output2= normalize(output1) #normalize the covid data
-        covid_json = to_geojson(output2) #make the geodataframe to geojson
-
-        figure = covid_map(covid_json, name)
-        curr_time = datetime.now().strftime("%B %d, %Y")
-
+    if len(name) < 1:
         return render_template(
-            "page2.html",
-            name=name,
-            map=figure._repr_html_(),
-            curr_time = curr_time
-        )
+        "page1_NA_input.html")
     else:
-        return render_template(
-        "page1_invalid_input.html")
+        zip_code = zipcode_validation(name)
+        if len(zip_code) > 0:
+            pzip = zip_geom() #get the Philly zipcode data
+            cr = covid_realtime() #get the covid real time data
+            output1 = merge_table(cr, pzip) #merge two table together by zipcode
+            output2= normalize(output1) #normalize the covid data
+            covid_json = to_geojson(output2) #make the geodataframe to geojson
+
+            figure = covid_map(covid_json, name)
+            curr_time = datetime.now().strftime("%B %d, %Y")
+
+            return render_template(
+                "page2.html",
+                name=name,
+                map=figure._repr_html_(),
+                curr_time = curr_time
+            )
+        else:
+            return render_template(
+            "page1_invalid_input.html")
 
 
 #get the number of bike stations within given zipcode
@@ -872,7 +876,6 @@ def driving():
     )
 
 
-			    
 @application.route("/bike_download", methods=["GET"])
 def bike_download():
     """Download GeoJSON of data snapshot"""
@@ -880,7 +883,7 @@ def bike_download():
     stations = get_zipcode_stations(name)
 
     return Response(stations.to_json(), 200, mimetype="application/json")
-			    
+
 
 @application.route("/hospital_download", methods=["GET"])
 def hospital_download():
@@ -890,15 +893,15 @@ def hospital_download():
 
     return Response(hospitals.to_json(), 200, mimetype="application/json")
 
-			    
+
 @application.route("/fmarket_download", methods=["GET"])
 def fmarket_download():
     """Download GeoJSON of data snapshot"""
     name = request.args["address"]
     markets = get_zipcode_markets(name)
 
-    return Response(markets.to_json(), 200, mimetype="application/json")			    
-			    
+    return Response(markets.to_json(), 200, mimetype="application/json")
+
 
 @application.route("/ctakeout_download", methods=["GET"])
 def ctakeout_download():
@@ -906,11 +909,10 @@ def ctakeout_download():
     name = request.args["address"]
     takeouts = get_zipcode_takeouts(name)
 
-    return Response(takeouts.to_json(), 200, mimetype="application/json")			    
-			    
-			    
-			    
-			    
+    return Response(takeouts.to_json(), 200, mimetype="application/json")
+
+
+
 
 # 404 page example
 @application.errorhandler(404)
