@@ -889,6 +889,16 @@ def hospital_download():
     hospitals = get_zipcode_hospitals(name)
 
     return Response(hospitals.to_json(), 200, mimetype="application/json")
+
+			    
+@application.route("/fmarket_download", methods=["GET"])
+def fmarket_download():
+    """Download GeoJSON of data snapshot"""
+    name = request.args["address"]
+    markets = get_zipcode_markets(name)
+
+    return Response(markets.to_json(), 200, mimetype="application/json")			    
+			    
 			    
 
 # 404 page example
