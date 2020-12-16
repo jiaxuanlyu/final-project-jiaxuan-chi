@@ -2,5 +2,5 @@
 
 ### Jiaxuan Lyu, Chi Zhang
 
-### link: https://console.aws.amazon.com/elasticbeanstalk/home?region=us-east-1#/environment/dashboard?applicationName=daily&environmentId=e-gsjnt9remz
+### <a href="http://daily-env.eba-es3g2h8u.us-east-1.elasticbeanstalk.com/">Website</a>
 
