@@ -23,11 +23,11 @@ from shapely.geometry import shape
 
 
 # load credentials from a file
-with open("jxl.json", "r") as f_in:
+with open("pg_credentials.json.sample", "r") as f_in:
     pg_creds = json.load(f_in)
 
 # mapbox
-with open("mapbox_token.json", "r") as mb_token:
+with open("mapbox_token.json.sample", "r") as mb_token:
     MAPBOX_TOKEN = json.load(mb_token)["token"]
 
 
