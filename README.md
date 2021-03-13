@@ -11,5 +11,13 @@
 #### Preview
 <img src="https://github.com/MUSA-509/final-project-jiaxuan-chi/blob/main/preview.png">
 
+<br>
+
+<img src="https://github.com/jiaxuanlyu/final-project-jiaxuan-chi/blob/main/preview2.png">
+
+<br>
+
+<img src="https://github.com/jiaxuanlyu/final-project-jiaxuan-chi/blob/main/preview3.png">
+
 #### <a href="https://github.com/MUSA-509/final-project-jiaxuan-chi/blob/main/proposal.md">Proposal</a>
 
