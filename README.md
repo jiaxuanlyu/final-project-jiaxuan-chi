@@ -5,6 +5,8 @@
 
 ### <a href="http://daily-env.eba-es3g2h8u.us-east-1.elasticbeanstalk.com/">Website</a>
 
+Because the AWS account is expired, the website is currently not available.
+
 #### Architecture
 <img src="https://github.com/MUSA-509/final-project-jiaxuan-chi/blob/main/architecture_diagram-01.jpg">
 
